@@ -1,7 +1,5 @@
 import streamlit as st
 import pandas as pd
-import matplotlib.pyplot as plt
-import seaborn as sns
 
 st.set_page_config(page_title="자동 데이터 대시보드", layout="wide")
 
@@ -30,16 +28,13 @@ if uploaded_file is not None:
     # 수치형 컬럼 선택
     numeric_cols = df.select_dtypes(include=["int64", "float64"]).columns.tolist()
     if len(numeric_cols) > 0:
-        st.subheader("📈 히스토그램")
-        col = st.selectbox("히스토그램으로 볼 컬럼 선택", numeric_cols)
-        fig, ax = plt.subplots()
-        sns.histplot(df[col], kde=True, ax=ax)
-        st.pyplot(fig)
+        st.subheader("📈 히스토그램 / 시각화")
+        col = st.selectbox("시각화할 컬럼 선택", numeric_cols)
+        st.bar_chart(df[col].value_counts())
 
-        st.subheader("📉 상관관계 Heatmap")
-        fig, ax = plt.subplots(figsize=(8, 6))
-        sns.heatmap(df[numeric_cols].corr(), annot=True, cmap="coolwarm", ax=ax)
-        st.pyplot(fig)
+        st.subheader("📉 상관관계")
+        corr = df[numeric_cols].corr()
+        st.dataframe(corr.style.background_gradient(cmap="coolwarm"))
     else:
         st.warning("수치형 컬럼이 없습니다.")
 
